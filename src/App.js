@@ -27,7 +27,7 @@ import Location from './components/Location/Location';
 import Diet from './components/diet/diet';
 
 // API
-import { API } from './api';
+import { API } from '../client/src/api';
 
 // Doctor Pages
 import DocDashboard from './components/doctorComp/dashboard';
