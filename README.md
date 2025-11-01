@@ -1,6 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
-<h1>Medico App</h1>
+<h1>instahelp App</h1>
 
 > **Thanks to Team HAB59 and Judges for coming up with this hackathon and providing us a platform to exibit our skills**
 
