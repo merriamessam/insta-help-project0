@@ -1,26 +1,36 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const mongoose = require("mongoose");
 
-const monitorDataSchema = new Schema({
-    patientId: {
-        type: Schema.Types.ObjectId,
-        ref: "patient"
-    },
-    bloodpressure: {
-        type: Array
-    },
-    diabetes: {
-        type:Array
-    },
-    covid:{
-        type: Array
-    },
-    calories:{
-        type: Array
-    },
-    pulse:{
-        type: Array
-    }
-},{timestamps: true});
+const monitorSchema = new mongoose.Schema({
+  patientId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Patient",
+    required: true
+  },
+  temperature: {
+    type: Number,
+    default: null
+  },
+  heartRate: {
+    type: Number,
+    default: null
+  },
+  stress: {
+    type: Number,
+    default: null
+  },
+  bloodPressure: {
+    type: String, 
+    default: null
+  },
+  oxygenLevel: {
+    type: Number,
+    default: null
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
+    
+  }
+});
 
-module.exports = mongoose.model('monitor', monitorDataSchema);
+module.exports = mongoose.model("Monitor", monitorSchema);

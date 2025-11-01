@@ -1,68 +1,63 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
-// Simple validator to ensure the access code is an even number
-const isEvenCode = (value) => {
-  const num = parseInt(value, 10);
-  return !isNaN(num) && num % 2 === 0;
+const doctorSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  gender: { type: String },
+  age: { type: Number },
+  contact1: { type: String },
+  contact2: { type: String },
+  city: { type: String },
+  state: { type: String },
+  zip: { type: Number },
+  university: { type: String },
+  specialization: { type: String },
+  honors: { type: String },
+  yearOfExp: { type: Number },
+  aboutMe: { type: String },
+  invitation: [
+    {
+      from: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Patient"
+      },
+      date: {
+        type: Date,
+        default: Date.now
+      }
+    }
+  ],
+  appointment: [
+    {
+      patient: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Patient"
+      },
+      date: Date,
+      reason: String,
+      status: String
+    }
+  ]
+});
+
+// 🔒 Hash password before saving
+doctorSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+// 🧾 Generate JWT token
+doctorSchema.methods.generateAuthToken = function () {
+  return jwt.sign(
+    { id: this._id, role: "doctor" },
+    process.env.JWT_SECRET || "secretkey",
+    { expiresIn: "7d" }
+  );
 };
 
-const doctorSchema = new Schema(
-  {
-    name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-
-    // Profile Information
-    state: String,
-    city: String,
-    zip: String,
-    gender: { type: String, enum: ['male', 'female', 'other'] },
-    age: Number,
-    contact1: String,
-    contact2: String,
-
-    university: String,
-    specialization: String,
-    honors: String,
-    ratings: { type: Number, default: 0, min: 0, max: 5 },
-    yearOfExp: Number,
-    aboutMe: String,
-
-    // Authentication & Access
-    role: { type: String, default: 'doctor' },
-    accessCode: {
-      type: String,
-      required: true,
-      validate: {
-        validator: isEvenCode,
-        message: 'Access code must be an even number.'
-      }
-    },
-    isApproved: { type: Boolean, default: false },
-
-    // Relations
-    invitation: [
-      {
-        from: { type: Schema.Types.ObjectId, ref: 'Patient' },
-        message: String,
-        createdAt: { type: Date, default: Date.now }
-      }
-    ],
-    appointment: [
-      {
-        patient: { type: Schema.Types.ObjectId, ref: 'Patient' },
-        date: Date,
-        reason: String,
-        status: {
-          type: String,
-          enum: ['pending', 'confirmed', 'completed'],
-          default: 'pending'
-        }
-      }
-    ]
-  },
-  { timestamps: true }
-);
-
-module.exports = mongoose.model('Doctor', doctorSchema);
+module.exports = mongoose.model("Doctor", doctorSchema);

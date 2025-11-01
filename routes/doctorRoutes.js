@@ -22,4 +22,9 @@ router.get("/checkRequest", isAuth, doctorController.checkRequest);
 
 router.post("/saveAppointments/:patientId", isAuth, doctorController.saveAppointments);
 
+router.post("/saveAppointments/:patientId", isAuth, doctorController.saveAppointments);
+// ✅ Monitor data routes
+router.get("/monitor/:patientId", isAuth, doctorController.getMonitorData);
+router.post("/monitor/:patientId", isAuth, doctorController.updateMonitorData);
+
 module.exports = router;
